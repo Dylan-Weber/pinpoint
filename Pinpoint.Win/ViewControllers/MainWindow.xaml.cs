@@ -32,6 +32,7 @@ using Pinpoint.Plugin.ProcessManager;
 using Pinpoint.Plugin.Reddit;
 using Pinpoint.Win.ViewModels;
 using PinPoint.Plugin.Spotify;
+using Pinpoint.Plugin.Timers;
 using Pinpoint.Plugin.UrlLauncher;
 using Pinpoint.Plugin.Weather;
 using Pinpoint.Win.Annotations;
@@ -139,7 +140,8 @@ namespace Pinpoint.Win.ViewControllers
                 _pluginEngine.AddPlugin(new ClipboardManagerPlugin()),
                 _pluginEngine.AddPlugin(new WeatherPlugin()),
                 _pluginEngine.AddPlugin(new OperatingSystemPlugin()),
-                _pluginEngine.AddPlugin(new ProcessManagerPlugin())
+                _pluginEngine.AddPlugin(new ProcessManagerPlugin()),
+                _pluginEngine.AddPlugin(new TimersPlugin())
             };
 
             await Task.WhenAll(addPluginTasks).ConfigureAwait(false);
