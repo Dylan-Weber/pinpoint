@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Input;
+using System.Windows.Interop;
 using NHotkey;
 using NHotkey.Wpf;
 using Pinpoint.Core;
@@ -37,6 +38,7 @@ using Pinpoint.Plugin.Text;
 using Pinpoint.Plugin.UrlLauncher;
 using Pinpoint.Plugin.Weather;
 using Pinpoint.Win.Annotations;
+using Pinpoint.Win.Native;
 using WK.Libraries.SharpClipboardNS;
 using KeyEventArgs = System.Windows.Input.KeyEventArgs;
 using MessageBox = System.Windows.MessageBox;
@@ -175,8 +177,9 @@ namespace Pinpoint.Win.Views
             else
             {
                 var screen = Screen.FromPoint(System.Windows.Forms.Cursor.Position);
-                Left = (screen.Bounds.Left + screen.Bounds.Width / 2 - Width / 2) + _offsetFromDefaultX;
-                Top = (screen.Bounds.Top + screen.Bounds.Height / 5) + _offsetFromDefaultY;
+                var x = (screen.Bounds.Left + screen.Bounds.Width / 2 - Width / 2) + _offsetFromDefaultX;
+                var y = (screen.Bounds.Top + screen.Bounds.Height / 5) + _offsetFromDefaultY;
+                MoveWindow(x, y);
 
                 Show();
                 Activate();
@@ -200,10 +203,16 @@ namespace Pinpoint.Win.Views
 
         public void MoveWindowToDefaultPosition()
         {
+
             // Locate window horizontal center near top of screen
-            Left = _defaultWindowPosition.X;
-            Top = _defaultWindowPosition.Y;
             _offsetFromDefaultX = _offsetFromDefaultY = 0;
+            MoveWindow(_defaultWindowPosition.X, _defaultWindowPosition.Y);
+        }
+
+        private void MoveWindow(double x, double y)
+        {
+            var handle = new WindowInteropHelper(this).Handle;
+            User32.SetWindowPos(handle, IntPtr.Zero, (int)x, (int)y, (int)Width, (int)Height, 4);
         }
 
         private Point ComputeDefaultWindowPosition() => new Point(SystemParameters.PrimaryScreenWidth / 2 - Width / 2, SystemParameters.PrimaryScreenHeight / 5);
